@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.flyingcrop"
+    android:versionName="1.0" >
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="FlyingCrop"
+        android:theme="@style/MaterialDesign"
+        android:hardwareAccelerated="true">
+        <activity
+            android:name=".MainMenu"
+            android:label="FlyingCrop" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".Settings"
+            android:label="FlyingCrop" >
+        </activity>
+
+        <service android:name=".EasyShareService" />
+        <service android:name=".CropService" android:hardwareAccelerated="true"/>
+
+        <fragment
+            android:id="@+id/pm_fragment"
+            android:name="com.easycrop.ScreenCaptureFragment" />
+
+        <activity
+            android:name=".EasyCrop"
+            android:excludeFromRecents="true"
+            android:label="FlyingCrop"
+            android:theme="@style/Theme.Transparent" >
+        </activity>
+
+        <service
+            android:name=".StopService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <service
+            android:name=".Stop"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <service
+            android:name=".Brush"
+            android:enabled="true"
+            android:exported="true"
+            android:hardwareAccelerated="true">
+        </service>
+
+        <service
+            android:name=".RestartBrush"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <service
+            android:name=".StopBrush"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <receiver android:name=".BootReciever">
+            <intent-filter >
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>
