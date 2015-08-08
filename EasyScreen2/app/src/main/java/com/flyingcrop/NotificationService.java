@@ -13,7 +13,7 @@ import android.os.IBinder;
 /**
  * Created by Pedro on 13/02/2015.
  */
-public class EasyShareService extends Service{
+public class NotificationService extends Service{
 
     private boolean isRunning  = false;
     long volume_down;
@@ -28,39 +28,58 @@ public class EasyShareService extends Service{
         //Creating new thread for my service
         //Always write your long running tasks in a separate thread, to avoid AN
 
+                final SharedPreferences settings = getSharedPreferences("data", 0);
 
+                if(settings.getInt("type", 0) == 1){
+                    if(settings.getBoolean("first_button", true)){
+                        Intent bIntent = new Intent(getBaseContext(), FirstButton.class);
+                        startService(bIntent);
+                    }else {
+                        Intent bIntent = new Intent(getBaseContext(), ButtonService.class);
+                        startService(bIntent);
+                    }
+                    stopSelf();
+                }else{
+                    if (settings.getBoolean("first_notification", true)) {
+                        Intent bIntent = new Intent(getBaseContext(), FirstNotification.class);
+                        startService(bIntent);
+                        stopSelf();
+                    }
+                }
 
-                Intent dialogIntent = new Intent(getBaseContext(), CropService.class);
-                dialogIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                Intent dialogIntent = new Intent(getBaseContext(), Crop.class);
+
                 PendingIntent pIntent = PendingIntent.getService(getBaseContext(), 0, dialogIntent, 0);
 
                 Intent stopIntent = new Intent(getBaseContext(), Stop.class);
+
                 stopIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                     | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 PendingIntent sIntent = PendingIntent.getService(getBaseContext(), 0, stopIntent, 0);
 
                 Intent brushIntent = new Intent(getBaseContext(), Brush.class);
-                stopIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 PendingIntent bIntent = PendingIntent.getService(getBaseContext(), 0, brushIntent, 0);
+
+                Intent flIntent = new Intent(getBaseContext(), MainMenu.class);
+                PendingIntent fIntent = PendingIntent.getActivity(getBaseContext(), 0, flIntent, 0);
 
 
 
                 Notification.Builder notif  = new Notification.Builder(getBaseContext())
                         .setContentTitle("FlyingCrop")
-                        .setContentText("Hit to crop.")
+                        .setContentText("Hit to launch menu")
+                        .setSubText("You may have to scroll down this notification")
                         .setPriority(Notification.PRIORITY_MIN)
                         .setWhen(0)
-                        .setContentIntent(pIntent)
+                        .setContentIntent(fIntent)
                         .setSmallIcon(com.flyingcrop.R.drawable.ab_ico)
                         .setOngoing(true);
-                        SharedPreferences settings = getBaseContext().getSharedPreferences("data", 0);
 
-                        if(!settings.getBoolean("hide", false)) {
-                            notif.addAction(R.drawable.brush, "Brush", bIntent);
-                            notif.addAction(R.drawable.dismiss, "Dismiss", sIntent);
-                        }
+
+                            notif.addAction(R.drawable.nicon_crop, "", pIntent);
+                            notif.addAction(R.drawable.brush, "", bIntent);
+                            notif.addAction(R.drawable.dismiss, "", sIntent);
+
 
 
                 Notification n  = notif.build();

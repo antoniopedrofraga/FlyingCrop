@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
@@ -16,7 +17,16 @@
         android:icon="@drawable/ic_launcher"
         android:label="FlyingCrop"
         android:theme="@style/MaterialDesign"
-        android:hardwareAccelerated="true">
+        android:hardwareAccelerated="true"
+        coreApp="true"
+        android:sharedUserId="android.uid.system">
+        <!--This meta-data tag is required to use Google Play Services.-->
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <!--Include the AdActivity configChanges and theme. -->
+        <activity android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".MainMenu"
             android:label="FlyingCrop" >
@@ -32,8 +42,14 @@
             android:label="FlyingCrop" >
         </activity>
 
-        <service android:name=".EasyShareService" />
-        <service android:name=".CropService" android:hardwareAccelerated="true"/>
+        <service android:name=".NotificationService" />
+        <service android:name=".ButtonService"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+        <service android:name=".FirstButton" />
+        <service android:name=".FirstRun" />
+        <service android:name=".FirstNotification" />
+        <service android:name=".FirstCrop" />
+        <service android:name=".FirstBrush" />
 
         <fragment
             android:id="@+id/pm_fragment"
@@ -47,32 +63,27 @@
         </activity>
 
         <service
-            android:name=".StopService"
+            android:name=".Stop"
             android:enabled="true"
             android:exported="true" >
         </service>
 
+
         <service
-            android:name=".Stop"
+            android:name=".Crop"
             android:enabled="true"
             android:exported="true" >
         </service>
 
         <service
             android:name=".Brush"
-            android:enabled="true"
-            android:exported="true"
             android:hardwareAccelerated="true">
         </service>
 
-        <service
-            android:name=".RestartBrush"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
+
 
         <service
-            android:name=".StopBrush"
+            android:name=".RestartBrush"
             android:enabled="true"
             android:exported="true" >
         </service>

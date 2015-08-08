@@ -18,7 +18,7 @@ public class BootReciever extends BroadcastReceiver
         boolean bootRun = settings.getBoolean("boot", false);
 
         if(bootRun) {
-            Intent myIntent = new Intent(context, EasyShareService.class);
+            Intent myIntent = new Intent(context, NotificationService.class);
             myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startService(myIntent);
         }

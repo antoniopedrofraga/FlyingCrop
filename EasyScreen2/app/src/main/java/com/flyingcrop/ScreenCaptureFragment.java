@@ -17,11 +17,14 @@
 package com.flyingcrop;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,10 +39,15 @@ import android.media.MediaScannerConnection;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.ConditionVariable;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
 import android.os.Vibrator;
+import android.renderscript.RenderScript;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
@@ -49,6 +57,7 @@ import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.flyingcrop.common.logger.Log;
@@ -65,6 +74,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Provides UI for the screen capture.
@@ -77,9 +87,10 @@ public class ScreenCaptureFragment extends Fragment {
     private static final String STATE_RESULT_DATA = "result_data";
 
     private static final int REQUEST_MEDIA_PROJECTION = 1;
+    boolean mBounded;
+    Brush mServer;
 
     private int mScreenDensity;
-    private int counter = 0;
     public static Image image = null;
     private int mResultCode;
     private Intent mResultData;
@@ -89,6 +100,8 @@ public class ScreenCaptureFragment extends Fragment {
     private VirtualDisplay mVirtualDisplay;
     private MediaProjectionManager mMediaProjectionManager;
     private Handler mHandler = new Handler(/*Looper.getMainLooper()*/);
+    private Boolean image_available = false;
+
     private SurfaceView mSurfaceView;
     private Buffer mHeaderBuffer;
     int mWidth = 0;
@@ -96,6 +109,9 @@ public class ScreenCaptureFragment extends Fragment {
     int screen_width = 0;
     int screen_height = 0;
     DisplayMetrics metrics;
+    Bitmap bitmap = null;
+    FileOutputStream fos = null;
+    int loop = 0;
 
     //crop bitmap
     float x_inicial;
@@ -103,6 +119,8 @@ public class ScreenCaptureFragment extends Fragment {
     float x_final;
     float y_final;
     float status_bar_height;
+    String STORE_DIRECTORY;
+
 
     //Saving
 
@@ -111,14 +129,7 @@ public class ScreenCaptureFragment extends Fragment {
     public ScreenCaptureFragment(){}
 
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            mResultCode = savedInstanceState.getInt(STATE_RESULT_CODE);
-            mResultData = savedInstanceState.getParcelable(STATE_RESULT_DATA);
-        }
-    }
+
 
     @Nullable
     @Override
@@ -239,11 +250,14 @@ public class ScreenCaptureFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_MEDIA_PROJECTION) {
-            if (resultCode != Activity.RESULT_OK) {
-                Log.i(TAG, "User cancelled");
 
+            if (resultCode != Activity.RESULT_OK) {
+                Toast.makeText(getActivity(), "You must accept this request for a proper functioning of FlyingCrop!", Toast.LENGTH_SHORT).show();
+                Intent stopIntent = new Intent(getActivity(), Brush.class);
+                getActivity().stopService(stopIntent);
                 return;
             }
+
             Activity activity = getActivity();
             if (activity == null) {
                 return;
@@ -292,7 +306,7 @@ public class ScreenCaptureFragment extends Fragment {
             setUpVirtualDisplay();
         } else {
             Log.i(TAG, "Requesting confirmation");
-            // This initiates a prompt dialog for the user to confirm screen projection.
+
             startActivityForResult(
                     mMediaProjectionManager.createScreenCaptureIntent(),
                     REQUEST_MEDIA_PROJECTION);
@@ -343,7 +357,6 @@ public class ScreenCaptureFragment extends Fragment {
         if (mMediaProjection != null) {
 
 
-
             final Notification.Builder builder = new Notification.Builder(getActivity())
                     .setContentTitle("Saving Crop...")
                     .setContentText("Wait a second")
@@ -357,37 +370,54 @@ public class ScreenCaptureFragment extends Fragment {
             notificationManager.notify(1, builder.build());
 
 
-            final String STORE_DIRECTORY = storage;
+            STORE_DIRECTORY = storage;
 
 
             int flags = DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY | DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC;
 
             mImageReader = ImageReader.newInstance(mWidth, mHeight, PixelFormat.RGBA_8888, 2);
             mMediaProjection.createVirtualDisplay("screencap", mWidth, mHeight, mScreenDensity, flags, mImageReader.getSurface(), new VirtualDisplayCallback(), mHandler);
+            if(ServiceIsRunning()) {
+                Intent mIntent = new Intent(getActivity(), Brush.class);
+                getActivity().bindService(mIntent, mConnection, Context.BIND_AUTO_CREATE);
+            }
+
             mImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
 
                 @Override
                 public void onImageAvailable(ImageReader reader) {
 
-                    Intent startIntent = new Intent(getActivity(), StopBrush.class);
-                    getActivity().startService(startIntent);
+                    image_available = true;
 
 
-                    FileOutputStream fos = null;
-                    Bitmap bitmap = null;
+
+
+                    Log.d("teste", "image_available : " + image_available.toString());
+
+
                     try {
 
-                        long time_now =  System.currentTimeMillis();
+                        final long time_now =  System.currentTimeMillis();
                         image = mImageReader.acquireLatestImage();
-                        Log.e(TAG, "Time 1 " + (System.currentTimeMillis() - time_now));
+
+
+                        Log.i(TAG, "Time 1 " + (System.currentTimeMillis() - time_now));
 
                         if (image != null) {
 
-
-
-
-
-
+                            if(ServiceIsRunning()) {
+                                if(loop == 0) {
+                                    View v = mServer.getView();
+                                    WindowManager wm = mServer.getWindowM();
+                                    if (v != null)
+                                        wm.removeViewImmediate(v);
+                                    else
+                                        mServer.removeAllView();
+                                    Intent mIntent = new Intent(getActivity(), Brush.class);
+                                    getActivity().stopService(mIntent);
+                                }
+                                loop++;
+                            }
 
                             if(!isFolder()){
                                 Notification.Builder builder = new Notification.Builder(getActivity())
@@ -404,74 +434,9 @@ public class ScreenCaptureFragment extends Fragment {
 
                                 getActivity().finish();
                             }
-                           Image.Plane[] planes = image.getPlanes();
-                           Buffer imageBuffer = planes[0].getBuffer().rewind();
-                           Log.e(TAG, "Time 2 " + (System.currentTimeMillis() - time_now));
 
-                            // create bitmap
-                            bitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
-                            bitmap.copyPixelsFromBuffer(imageBuffer);
-                            int offset = 0;
-                            int pixelStride = planes[0].getPixelStride();
-                            int rowStride = planes[0].getRowStride();
-                            int rowPadding = rowStride - pixelStride * mWidth;
-                            ByteBuffer buffer = planes[0].getBuffer();
-                            Log.e(TAG, "Time 3 " + (System.currentTimeMillis() - time_now));
+                                    savePlanes();
 
-                            for (int i = 0; i < mHeight; ++i) {
-                                for (int j = 0; j < mWidth; ++j) {
-                                    int pixel = 0;
-                                    pixel |= (buffer.get(offset) & 0xff) << 16;     // R
-                                    pixel |= (buffer.get(offset + 1) & 0xff) << 8;  // G
-                                    pixel |= (buffer.get(offset + 2) & 0xff);       // B
-                                    pixel |= (buffer.get(offset + 3) & 0xff) << 24; // A
-                                    bitmap.setPixel(j, i, pixel);
-                                    offset += pixelStride;
-                                }
-                                offset += rowPadding;
-                            }
-                            Log.e(TAG, "Time 4 " + (System.currentTimeMillis() - time_now));
-
-
-
-
-                            Log.e(TAG, "x_inicial " + x_inicial);
-                            Log.e(TAG, "x_final " + x_final);
-                            Log.e(TAG, "y_inicial " + y_inicial);
-                            Log.e(TAG, "y_final " + y_final);
-
-
-
-                            bitmap = Bitmap.createBitmap(bitmap,(int) x_inicial ,(int)status_bar_height + (int)y_inicial , Math.abs((int)x_final - (int) x_inicial), Math.abs((int)y_final - (int) y_inicial));
-                            //bitmap = Bitmap.createBitmap(bitmap, 0 ,0,mWidth, mHeight);
-                            // write bitmap to a file
-
-                            Canvas mCanvas = new Canvas(bitmap);
-
-                            Bitmap watermark = resize(BitmapFactory.decodeResource(getActivity().getResources(),
-                                    R.drawable.watermark));
-
-                            mCanvas.drawBitmap(watermark, 0, 0,null);
-                            String date = getDate();
-
-                            String dir = STORE_DIRECTORY + "/FlyingCrop/"+ date + ".png";
-                            fos = new FileOutputStream(dir);
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                            Log.e(TAG, "Time 5 " + (System.currentTimeMillis() - time_now));
-                            File file = new File(dir);
-                           // MediaStore.Images.Media.insertImage(getActivity().getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
-                            final SharedPreferences settings = getActivity().getSharedPreferences("data", 0);
-                            if(settings.getBoolean("toast",true)) {
-                                Toast.makeText(getActivity(), "Image was saved: " + dir, Toast.LENGTH_SHORT).show();
-                            }
-
-                            notifySS(bitmap, date, dir);
-
-                            MediaScannerConnection.scanFile(getActivity(), new String[] {dir}, null, null);
-
-                            counter++;
-                            mImageReader = null;
-                            getActivity().finish();
                         }
 
                     } catch (Exception e) {
@@ -552,13 +517,14 @@ public class ScreenCaptureFragment extends Fragment {
                 .setPriority(2)
                 .setTicker("Crop Saved")
                 .build();
+        final SharedPreferences settings = getActivity().getSharedPreferences("data", 0);
 
         NotificationManager notificationManager =
                 (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(1, notif);
 
-        final SharedPreferences settings = getActivity().getSharedPreferences("data", 0);
+
 
         if(settings.getBoolean("vibration", false)){
             Vibrator v = (Vibrator) this.getActivity().getSystemService(Context.VIBRATOR_SERVICE);
@@ -593,6 +559,137 @@ public class ScreenCaptureFragment extends Fragment {
         resizedBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, false);
         return resizedBitmap;
     }
+
+
+    ServiceConnection mConnection = new ServiceConnection() {
+
+        public void onServiceDisconnected(ComponentName name) {
+
+            mBounded = false;
+            mServer = null;
+        }
+
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mBounded = true;
+            Brush.LocalBinder mLocalBinder = (Brush.LocalBinder)service;
+            mServer = mLocalBinder.getServerInstance();
+            //mServer.clear();
+        }
+    };
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(mBounded) {
+            getActivity().unbindService(mConnection);
+            mBounded = false;
+        }
+    };
+
+    public boolean ServiceIsRunning(){
+        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
+        {
+            if ("com.flyingcrop.Brush"
+                    .equals(service.service.getClassName()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void savePlanes(){
+
+        Image.Plane[] planes = image.getPlanes();
+        Buffer imageBuffer = planes[0].getBuffer().rewind();
+        //Log.i(TAG, "Time 2 " + (System.currentTimeMillis() - time_now));
+
+        // create bitmap
+        bitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
+        bitmap.copyPixelsFromBuffer(imageBuffer);
+
+        int offset = 0;
+        int pixelStride = planes[0].getPixelStride();
+        int rowStride = planes[0].getRowStride();
+        int rowPadding = rowStride - pixelStride * mWidth;
+        ByteBuffer buffer = planes[0].getBuffer();
+        //Log.e(TAG, "Time 3 " + (System.currentTimeMillis() - time_now));
+        for (int i = 0; i < mHeight; ++i) {
+            for (int j = 0; j < mWidth; ++j) {
+                int pixel = 0;
+                pixel |= (buffer.get(offset) & 0xff) << 16;     // R
+                pixel |= (buffer.get(offset + 1) & 0xff) << 8;  // G
+                pixel |= (buffer.get(offset + 2) & 0xff);       // B
+                pixel |= (buffer.get(offset + 3) & 0xff) << 24; // A
+                bitmap.setPixel(j, i, pixel);
+                offset += pixelStride;
+            }
+            offset += rowPadding;
+        }
+        //Log.i(TAG, "Time 4 " + (System.currentTimeMillis() - time_now));
+
+
+
+
+        Log.i(TAG, "x_inicial " + x_inicial);
+        Log.i(TAG, "x_final " + x_final);
+        Log.i(TAG, "y_inicial " + y_inicial);
+        Log.i(TAG, "y_final " + y_final);
+
+
+
+        bitmap = Bitmap.createBitmap(bitmap,(int) x_inicial ,(int)status_bar_height + (int)y_inicial , Math.abs((int)x_final - (int) x_inicial), Math.abs((int)y_final - (int) y_inicial));
+        //bitmap = Bitmap.createBitmap(bitmap, 0 ,0,mWidth, mHeight);
+        // write bitmap to a file
+        SharedPreferences settings = getActivity().getSharedPreferences("data", 0);
+
+        if(!settings.getBoolean("watermark",false)) {
+            Canvas mCanvas = new Canvas(bitmap);
+
+            Bitmap watermark = resize(BitmapFactory.decodeResource(getActivity().getResources(),
+                    R.drawable.watermark));
+
+            mCanvas.drawBitmap(watermark, 0, 0, null);
+
+
+
+        }
+
+
+        String date = getDate();
+        String dir = STORE_DIRECTORY + "/FlyingCrop/"+ date + ".png";
+        try {
+            fos = new FileOutputStream(dir);
+        }catch(Exception e){
+
+        }
+
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        //Log.e(TAG, "Time 5 " + (System.currentTimeMillis() - time_now));
+        File file = new File(dir);
+        // MediaStore.Images.Media.insertImage(getActivity().getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
+
+        if(settings.getBoolean("toast",true)) {
+            Toast.makeText(getActivity(), "Image was saved: " + dir, Toast.LENGTH_SHORT).show();
+        }
+        if(settings.getBoolean("dismiss",false)) {
+            Intent stopIntent = new Intent(getActivity(), NotificationService.class);
+            stopIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            getActivity().stopService(stopIntent);
+        }
+
+        notifySS(bitmap, date, dir);
+
+        MediaScannerConnection.scanFile(getActivity(), new String[] {dir}, null, null);
+
+
+        mImageReader = null;
+        getActivity().finish();
+    }
+
 
 
 }

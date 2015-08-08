@@ -5,21 +5,13 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.app.PendingIntent;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.text.Html;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,18 +22,13 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 
-
-import com.android.vending.billing.IInAppBillingService;
-
-import com.flyingcrop.R;
 import com.flyingcrop.util.IabHelper;
 import com.flyingcrop.util.IabResult;
 import com.flyingcrop.util.Inventory;
 import com.flyingcrop.util.Purchase;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -51,10 +38,11 @@ public class MainMenu extends Activity {
     boolean bootRun;
     IabHelper mHelper;
     final String TAG = "IAB";
-    public static final String ITEM_PURCHASED = "android.test.purchased";
-    IInAppBillingService mService;
+    public static final String ITEM_PURCHASED = "premium5_.";
     boolean premium = false;
-    Toast error = Toast.makeText(getBaseContext(), "IABHelper could not set up", Toast.LENGTH_SHORT);
+    Toast error;
+    Toast premium_toast;
+    boolean set_up = false;
     
 
 
@@ -64,21 +52,29 @@ public class MainMenu extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_main_menu);
 
+        error = Toast.makeText(getBaseContext(), getResources().getString(R.string.error_log_in_play_store), Toast.LENGTH_SHORT);
+        premium_toast = Toast.makeText(getBaseContext(), getResources().getString(R.string.you_are_premium), Toast.LENGTH_SHORT);
 
+        final SharedPreferences settings = getSharedPreferences("data", 0);
+        if(!settings.getBoolean("advertising",false)){
+            AdView mAdView = (AdView) findViewById(R.id.adView);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdView.loadAd(adRequest);
+        }
+
+        if(settings.getBoolean("first_help",true)){
+            Intent fIntent = new Intent(getApplicationContext(), FirstRun.class);
+            startService(fIntent);
+        }
         //Premium Upgrade
 
 
         String base64EncodedPublicKey =
-                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5t/5e9gWhHZlV3OMGVaCZVRHk72o/anGhG2CP4ZzQyG+tLt1EwilUXLCN0joERFAJRMu5vNq2w6vSseUxtUkrJiRlT4ZPmvol0yZ2FjrCEHQUP3oRwH2p1QLlIJrHfFvWPUsG3g3gibCQFYClD/kX1Z8dz8GSIjjY7lmZOY7gjWHKXQXC3uiDCXMgl0fQ5xlg7kbze8OGNOdk/FglDAOh5GRpl5KnopKEAPye8WVeSaBlR8bd47uMDKA84QRrVF8jEEwH4gAoW4ODzEJva5itm3UKE3svAbephHKbMAYZWiJ4ece7AjXVeu1f5eOyGml16MaYPH8KeGjF3vLj05ywQIDAQAB";
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzDlK+tBuHZ+RGEld/zp5YWU+Ep88AKhAOTgKqSDv6VlkuRS6bqlJYLQBSUtd8NLxZvUDIokmN+dDVbiaWFRiqBlpADMrEakqhxgiVshnDLbOfU47LQmF5sLIY3qNHcFpezv13D+DX8SshSo9+YYl+FXPdHKXIOWFNjf+uNTYnRK7kpHQXq3dPF3zX8+A1X5a2U1ZgIYmsb/OcresG1bbU9ltqtjXpaE1Et8eYELJkAusLNDdr+nmhEd5ZJXTdJHehSO7Sq4CkI0uiZdjWCsNskwL7L4JGA+ogNNq/iIDZTTBkhckjaRBz9yiqIb3TsqAjfcIW740uVYmrr4QREpJwQIDAQAB";
 
-        final String base64EncodedPublicKey_test = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCg" +
-                "KCAQEAhNe2XQ70DceAwE6uyYJGK1dIBbZcPdlER/9EEzylr6RDU6tnGj0Tk7kceN03GKvRf/ucT+ERLL3O" +
-                "aHR22PXRXLZ17NZ81x6oS2vGmLyXBnjrU/I+asl8cNuLGySaoCdXxPAV+A9g6OG13dk+KY9i0O1roGpFH" +
-                "fsAFyKCgSqR0PMJZ1bS+wFFBYf3M4IxgBcxuuZKDmR+MztCgm5N4zc6w2CwFZn3mXeDoTg15mWDU3sZO" +
-                "WeRwFeynhV+FCYdDp8DpAkLk1b5IiXYFQ53wxCh/GxiKqBB6uQMmAixFjAcZV1QWfcBABae9vxiV5" +
-                "VAEJvOOnhPxnaT9HYadW0pQ/UbJwIDAQAB";
 
-        mHelper = new IabHelper(this, base64EncodedPublicKey_test);
+
+        mHelper = new IabHelper(this, base64EncodedPublicKey);
 
         mHelper.startSetup(new
                                    IabHelper.OnIabSetupFinishedListener() {
@@ -90,6 +86,7 @@ public class MainMenu extends Activity {
                                            } else {
                                                Log.d(TAG, "In-app Billing is set up OK");
                                                mHelper.queryInventoryAsync(mGotInventoryListener);
+                                               set_up = true;
                                            }
                                        }
                                    });
@@ -98,7 +95,7 @@ public class MainMenu extends Activity {
 
 
         //Get bootRun boolean
-        SharedPreferences settings = getSharedPreferences("data", 0);
+
         bootRun = settings.getBoolean("boot", false);
 
         final SharedPreferences.Editor editor = settings.edit();
@@ -118,28 +115,30 @@ public class MainMenu extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Intent serviceIntent = new Intent(getApplicationContext(), EasyShareService.class);
-                Intent CropService = new Intent(getApplicationContext(), com.flyingcrop.CropService.class);
+                Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
                 switch(position){
                     case 3: //quit
                         stopService(serviceIntent);
-                        stopService(CropService);
                         finish();
                         break;
                     case 6://boot run
                         CheckBox cb = (CheckBox)view.findViewById(R.id.checkBox1);
                         cb.setChecked(!cb.isChecked());
 
-                        if(!bootRun) {
-                            Toast.makeText(getBaseContext(), "This app is now allowed to run on boot, a FlyingCrop notification will be created", Toast.LENGTH_SHORT).show();
+                        editor.putBoolean("premium", true);
+                        editor.commit();
+
+                        /*if(!bootRun) {
+                            Toast.makeText(getBaseContext(), getResources().getString(R.string.main_menu_boot_allowed), Toast.LENGTH_SHORT).show();
                         }
 
                         bootRun = !bootRun;
 
                         editor.putBoolean("boot", bootRun);
-                        editor.commit();
+                        editor.commit();*/
 
                         break;
+
                     case 8: //contact through e-mail
                         Intent send = new Intent(Intent.ACTION_SENDTO);
                         String uriText = "mailto:" + Uri.encode("antoniopedrofraga@gmail.com") +
@@ -152,17 +151,18 @@ public class MainMenu extends Activity {
                     case 1: //minimize
 
                         if( !ServiceIsRunning() ){ // ver se o processo esta a correr
-                            Toast.makeText(getBaseContext(), "FlyingCrop notification was created", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getBaseContext(), getResources().getString(R.string.main_menu_initiate_service), Toast.LENGTH_SHORT).show();
                             startService(serviceIntent);
                         }
                         finish();
                         break;
                     case 9: // version
+                        final SharedPreferences settings = getSharedPreferences("data", 0);
                         String versionName = BuildConfig.VERSION_NAME;
                         new AlertDialog.Builder(MainMenu.this)
-                                .setTitle("FlyingCrop")
-                                .setMessage("\nVersion " + versionName + "\n\n" + "FlyingCrop provides an easy share of taken screen shots, designed and programed to be as intuitive as possible. " +
-                                        "\n\nDeveloped by Pedro Fraga\n\nCopyright © 2015 FlyingCrop")
+                                .setTitle(settings.getBoolean("premium", false) ? "FlyingCrop Premium" : "FlyingCrop")
+                                .setMessage("\n" + getResources().getString(R.string.main_menu_version)+ " " + versionName + "\n\n" + getResources().getString(R.string.main_menu_version_text) +
+                                        "\n\n" + getResources().getString(R.string.main_menu_version_developer) + "\n\nCopyright © 2015 FlyingCrop")
                                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         // do nothing
@@ -171,6 +171,7 @@ public class MainMenu extends Activity {
                                 .show();
 
                         break;
+
                     case 2: //settings
                         //nao te esquecas de fazer com icon e sem icon na notificacao
                         //tamanho da imagem, diretorio do save
@@ -178,15 +179,23 @@ public class MainMenu extends Activity {
                         MainMenu.this.startActivity(myIntent);
                         break;
                     case 5:
-                        if(mHelper != null) {
-                            mHelper.launchPurchaseFlow(MainMenu.this, ITEM_PURCHASED, 10001,
-                                    mPurchaseFinishedListener, "mypurchasetoken");
-                        }else{
-                            if(error.getView().getWindowVisibility() != View.VISIBLE)
-                                error.show();
-                        }
+                        SharedPreferences settings2 = getSharedPreferences("data", 0);
 
-                        break;
+                        if(!settings2.getBoolean("premium", false)) {
+
+                            if (set_up) {
+                                mHelper.launchPurchaseFlow(MainMenu.this, ITEM_PURCHASED, 10001,
+                                        mPurchaseFinishedListener, "mypurchasetoken");
+                            } else {
+                                if (error.getView().getWindowVisibility() != View.VISIBLE)
+                                    error.show();
+                            }
+                            break;
+
+                        }else{
+                            if (premium_toast.getView().getWindowVisibility() != View.VISIBLE)
+                                premium_toast.show();
+                        }
                 }
 
             }
@@ -196,34 +205,40 @@ public class MainMenu extends Activity {
 
     private ArrayList<Item> generateData(){
         ArrayList<Item> models = new ArrayList<Item>();
-        models.add(new Item("MENU"));
+        models.add(new Item(getResources().getString(R.string.main_menu)));
         if(ServiceIsRunning()) {
-            models.add(new Item(R.drawable.minimize, "Minimize", "Click to run service on background"));
+            models.add(new Item(R.drawable.minimize, getResources().getString(R.string.main_menu_run_changed), getResources().getString(R.string.main_menu_run_secondary)));
         }else{
-            models.add(new Item(R.drawable.minimize, "Run FlyingCrop", "Click to run service on background"));
+            models.add(new Item(R.drawable.minimize, getResources().getString(R.string.main_menu_run), getResources().getString(R.string.main_menu_run_secondary)));
         }
-        models.add(new Item(R.drawable.settings,"Settings","Customize it at your own way"));
+        models.add(new Item(R.drawable.settings,getResources().getString(R.string.main_menu_settings),getResources().getString(R.string.main_menu_settings_secondary)));
         if(!ServiceIsRunning()) {
-            models.add(new Item(R.drawable.quit, "Quit", "Quit FlyingCrop"));
+            models.add(new Item(R.drawable.quit, getResources().getString(R.string.main_menu_quit), getResources().getString(R.string.main_menu_quit_secondary)));
         }else{
-            models.add(new Item(R.drawable.quit, "Stop FlyingCrop", "Disable notification and Quit"));
+            models.add(new Item(R.drawable.quit, getResources().getString(R.string.main_menu_quit_changed), getResources().getString(R.string.main_menu_quit_changed_secondary)));
         }
-        models.add(new Item("ENABLING"));
+        models.add(new Item(getResources().getString(R.string.main_menu_enable)));
 
-        Item premium = new Item("Premium","Get rid of the advertising and disable watermark",false);
-        if(this.premium)
+        Item premium = new Item(getResources().getString(R.string.main_menu_premium),getResources().getString(R.string.main_menu_premium_secondary),false);
+        final SharedPreferences settings = getSharedPreferences("data", 0);
+
+        if(settings.getBoolean("premium",false))
             premium.setPremium();
 
         models.add(premium);
 
-        models.add(new Item("Boot Run","Allow running on boot",true,bootRun));
+        models.add(new Item(getResources().getString(R.string.main_menu_boot),getResources().getString(R.string.main_menu_boot_secondary),true,bootRun));
 
-        models.add(new Item("SUPPORT"));
-        models.add(new Item("Contact","Feel free to give some feedback or suggestions", false));
+        models.add(new Item(getResources().getString(R.string.main_menu_support)));
+
+        models.add(new Item(getResources().getString(R.string.main_menu_contact),getResources().getString(R.string.main_menu_contact_secondary), false));
 
         String versionName = BuildConfig.VERSION_NAME;
 
-        models.add(new Item("Version",versionName,false));
+
+
+        models.add(new Item(getResources().getString(R.string.main_menu_version),settings.getBoolean("premium", false) ? versionName + " Premium" : versionName ,false));
+
         return models;
     }
 
@@ -258,7 +273,13 @@ public class MainMenu extends Activity {
         ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
         {
-            if ("com.flyingcrop.EasyShareService"
+            if ("com.flyingcrop.NotificationService"
+                    .equals(service.service.getClassName()))
+            {
+                return true;
+            }
+
+            if ("com.flyingcrop.ButtonService"
                     .equals(service.service.getClassName()))
             {
                 return true;
@@ -295,7 +316,7 @@ public class MainMenu extends Activity {
                                           Purchase purchase)
         {
             if (result.isFailure()) {
-                // Handle error
+                Toast.makeText(getBaseContext(), getResources().getString(R.string.error_premium_upgrade), Toast.LENGTH_LONG).show();
                 return;
             }
             else if (purchase.getSku().equals(ITEM_PURCHASED)) {
@@ -315,7 +336,8 @@ public class MainMenu extends Activity {
                                              Inventory inventory) {
 
             if (result.isFailure()) {
-                // Handle failure
+                Toast.makeText(getBaseContext(), getResources().getString(R.string.error_premium_upgrade), Toast.LENGTH_LONG).show();
+
             } else {
                 mHelper.consumeAsync(inventory.getPurchase(ITEM_PURCHASED),
                         mConsumeFinishedListener);
@@ -330,9 +352,16 @@ public class MainMenu extends Activity {
                                               IabResult result) {
 
                     if (result.isSuccess()) {
-
+                        final SharedPreferences settings = getSharedPreferences("data", 0);
+                        final SharedPreferences.Editor editor = settings.edit();
+                        editor.putBoolean("advertising", true);
+                        editor.putBoolean("premium", true);
+                        editor.commit();
+                        Intent intent = getIntent();
+                        finish();
+                        startActivity(intent);
                     } else {
-                        // handle error
+                        Toast.makeText(getBaseContext(), getResources().getString(R.string.error_premium_upgrade), Toast.LENGTH_LONG).show();
                     }
                 }
             };
@@ -350,17 +379,32 @@ public class MainMenu extends Activity {
                                              Inventory inventory) {
 
             if (result.isFailure()) {
-                // handle error here
+
             }
             else {
                 // does the user have the premium upgrade?
+
                 boolean mIsPremium = inventory.hasPurchase(ITEM_PURCHASED);
-                Toast.makeText(getBaseContext(), mIsPremium ? "Nao e premium" : "E premium", Toast.LENGTH_SHORT).show();
-                // update UI accordingly
+                final SharedPreferences settings = getSharedPreferences("data", 0);
+                final SharedPreferences.Editor editor = settings.edit();
+                if(mIsPremium && !settings.getBoolean("premium",false)){
+                    editor.putBoolean("advertising", true);
+                    editor.putBoolean("premium", true);
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
+
             }
         }
     };
 
-
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        setContentView(R.layout.activity_transparent);
+        finish();
+    }
 
 }

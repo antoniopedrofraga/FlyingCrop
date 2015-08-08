@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="60dp"
+    android:layout_height="match_parent"
     >
     <CheckBox
         android:id="@+id/checkBox1"
@@ -15,7 +15,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="11dp"
+        android:layout_centerVertical="true"
         android:enabled="true"
         android:gravity="center_horizontal"
         android:shadowColor="#30894E" />
@@ -35,9 +35,13 @@
         android:id="@+id/substring"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/string"
         android:paddingBottom="10dp"
+        android:layout_toLeftOf="@+id/checkBox1"
+        android:layout_alignParentLeft="true"
         android:textSize="12sp"
         android:paddingLeft="5dp"
+        android:layout_marginRight= "15dp"
         android:layout_alignParentBottom ="true"
         android:textColor="#FF444444"
 

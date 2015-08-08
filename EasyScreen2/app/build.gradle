@@ -6,11 +6,11 @@ android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
     defaultConfig {
-        applicationId "com.easycrop"
+        applicationId "com.flyingcrop"
         minSdkVersion 21
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0 beta"
+        versionCode 2
+        versionName "1.1 beta"
     }
     buildTypes {
         release {
@@ -26,4 +26,5 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.github.yukuku:ambilwarna:2.0'
+    compile 'com.google.android.gms:play-services-ads:7.5.0'
 }

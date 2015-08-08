@@ -26,10 +26,12 @@ public class EasyCrop extends SampleActivityBase {
         setContentView(com.flyingcrop.R.layout.transparent);
 
         if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            ScreenCaptureFragment fragment = new ScreenCaptureFragment();
-            transaction.replace(com.flyingcrop.R.id.sample_content_fragment, fragment);
-            transaction.commit();
+
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    ScreenCaptureFragment fragment = new ScreenCaptureFragment();
+                    transaction.replace(com.flyingcrop.R.id.sample_content_fragment, fragment);
+                    transaction.commit();
+
         }
     }
 

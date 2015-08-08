@@ -5,6 +5,7 @@ package com.flyingcrop;
  */
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,10 @@ public class MyAdapter extends ArrayAdapter<Item> {
 
         View rowView = null;
         if(!modelsArrayList.get(position).isGroupHeader() && !modelsArrayList.get(position).isCheckBox()){
-            rowView = inflater.inflate(com.flyingcrop.R.layout.row, parent, false);
+
+
+                rowView = inflater.inflate(com.flyingcrop.R.layout.row, parent, false);
+
 
             // 3. Get icon,title & counter views from the rowView
             ImageView imgView = (ImageView) rowView.findViewById(com.flyingcrop.R.id.item_icon);
@@ -51,10 +55,13 @@ public class MyAdapter extends ArrayAdapter<Item> {
             counterView.setText(modelsArrayList.get(position).getDescription());
 
             if(modelsArrayList.get(position).isPremium()) {
-                counterView.setTextColor(R.color.DarkSeaGreen);
-                titleView.setTextColor(R.color.DarkSeaGreen);
-                rowView.setClickable(false);
-                rowView.setEnabled(false);
+                final SharedPreferences settings = getContext().getSharedPreferences("data", 0);
+                if(settings.getBoolean("premium",false)) {
+                    counterView.setTextColor(R.color.DarkSeaGreen);
+                    titleView.setTextColor(R.color.DarkSeaGreen);
+                    rowView.setClickable(false);
+                    rowView.setEnabled(false);
+                }
             }
         }
         else if (modelsArrayList.get(position).isGroupHeader()){
@@ -65,9 +72,7 @@ public class MyAdapter extends ArrayAdapter<Item> {
             rowView.setOnClickListener(null);
             rowView.setMinimumHeight(20);
         }else if(modelsArrayList.get(position).isCheckBox()){
-            if(modelsArrayList.get(position).getDescription().length() > 55)
-                rowView = inflater.inflate(com.flyingcrop.R.layout.big_check_box_item, parent, false);
-            else
+
                 rowView = inflater.inflate(com.flyingcrop.R.layout.checkbox_item, parent, false);
 
             TextView titleView = (TextView) rowView.findViewById(com.flyingcrop.R.id.string);
@@ -79,11 +84,16 @@ public class MyAdapter extends ArrayAdapter<Item> {
             counterView.setText(modelsArrayList.get(position).getDescription());
 
 
+
             if(modelsArrayList.get(position).isPremium()){
-                counterView.setTextColor(R.color.DarkSeaGreen);
-                titleView.setTextColor(R.color.DarkSeaGreen);
-                cb.setEnabled(false);
-                cb.setClickable(false);
+                final SharedPreferences settings = getContext().getSharedPreferences("data", 0);
+                if(!settings.getBoolean("premium",false)) {
+                    counterView.setTextColor(R.color.DarkSeaGreen);
+                    titleView.setTextColor(R.color.DarkSeaGreen);
+
+                    cb.setEnabled(false);
+                    cb.setClickable(false);
+                }
             }
         }
 

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FlyingCrop</string>
+    <string name="hello_world"> </string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_transparent">Transparent</string>
+
+
+    <string name="error_log_in_play_store">Erro! Talvez ainda nao te tenhas autenticado na PlayStore</string>
+    <string name="error_premium_upgrade">Ocorreu um erro durante a atualização para premium</string>
+    <string name="you_are_premium">Já és premium, disfruta!</string>
+
+    <string name="main_menu_initiate_service">Foi criado um serviço do FlyingCrop</string>
+    <string name="main_menu_send_email">Enviar e-mail..</string>
+
+    <string name="main_menu_run">Iniciar FlyingCrop</string>
+    <string name="main_menu_run_secondary">Clica para correr o serviço em segundo plano</string>
+    <string name="main_menu_run_changed">Minimizar</string>
+
+    <string name="main_menu_settings">Configurações</string>
+    <string name="main_menu_settings_secondary">Customiza a tua aplicação</string>
+
+    <string name="main_menu_quit">Sair</string>
+    <string name="main_menu_quit_secondary">Sai do FlyingCrop</string>
+    <string name="main_menu_quit_changed">Parar o FlyingCrop</string>
+    <string name="main_menu_quit_changed_secondary">Parar o serviço e sair</string>
+
+    <string name="main_menu_enable">ATIVAR</string>
+
+    <string name="main_menu_premium_secondary">Livra-te da publicidade e desabilita a marca de água</string>
+
+    <string name="main_menu_boot">Correr em boot</string>
+    <string name="main_menu_boot_secondary">Inicia a aplicação quando o teu dispositivo liga</string>
+    <string name="main_menu_boot_allowed">Um serviço do FlyigCrop vai ser executado cada vez que ligares o dispositivo</string>
+
+    <string name="main_menu_support">SUPORTE</string>
+
+    <string name="main_menu_contact">Contactar</string>
+    <string name="main_menu_contact_secondary">Dá algumas sugestões ao programador</string>
+
+    <string name="main_menu_version">Versão</string>
+    <string name="main_menu_version_text">O FlyingCrop proporciona uma partilha fácil e customizada das capturas de ecrã, desenhado e programado para ser o mais intuitivo possível.</string>
+    <string name="main_menu_version_developer">Desenvolvido por Pedro Fraga</string>
+
+
+    <string name="settings_get_premium">Obtem Premium para disfrutar desta configuração</string>
+
+    <string name="settings_defaults">Por padrão</string>
+
+    <string name="settings_type">Tipo</string>
+    <string name="settings_type_secondary">Notificação ou botão</string>
+
+    <string name="settings_quality">Qualidade de imagem</string>
+    <string name="settings_quality_secondary">Uma maior resolução pode aumentar o tempo de processamento</string>
+
+    <string name="settings_brush_size">Tamanho do pincel</string>
+    <string name="settings_brush_size_secondary">Seleciona o tamanho mais adequado para esta ferramenta</string>
+
+    <string name="settings_dismiss">Fechar depois de um uso</string>
+    <string name="settings_dismiss_secondary">Terminar serviço depois de um recorte de ecrã</string>
+
+    <string name="settings_crop_theme">Tema de recorte</string>
+
+    <string name="settings_crop_color">Cor de recorte</string>
+    <string name="settings_crop_color_secondary">Adpta-te a qualquer tema aplicado no dispositivo</string>
+
+    <string name="settings_secondary_crop_color">Cor secundária de recorte</string>
+    <string name="settings_secondary_crop_color_secondary">Esta é a cor a ser aplicada em botões e texto</string>
+
+    <string name="settings_brush_color">Cor do pincel</string>
+    <string name="settings_brush_color_secondary">Customiza a cor do pincel</string>
+
+    <string name="settings_secondary_brush_color">Cor secundaria do pincel</string>
+    <string name="settings_secondary_brush_color_secondary">Esta é a cor a ser aplicada em botões e texto</string>
+
+    <string name="settings_notifications">Notificações</string>
+
+    <string name="settings_vibrate">Vibrar</string>
+    <string name="settings_vibrate_secondary">Vibrar quando a imagem estiver processada</string>
+
+    <string name="settings_toast">Ativar um toast com o diretório da imagem quando o processamento estiver completo</string>
+
+    <string name="settings_button">Botão</string>
+
+    <string name="settings_button_size">Tamanho do botão</string>
+    <string name="settings_button_size_secondary">Define o tamanho do botão</string>
+
+    <string name="settings_advertising">Publicidade</string>
+    <string name="settings_advertising_secondary">Remove a publicidade</string>
+
+    <string name="settings_watermark">Marca de água</string>
+    <string name="settings_watermark_secondary">Remove a marca de água, quando a marca de água estiver removida não estás a ajudar com a expansão do FlyingCrop</string>
+</resources>
