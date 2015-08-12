@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="banner_ad_unit_id">ca-app-pub-2561641892473879/3613241345</string>
+
+    <string name="app_name">FlyingCrop</string>
+    <string name="hello_world"> </string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_transparent">Transparent</string>
+
+    <string name="error_log_in_play_store">Error! Maybe you should log in into Play Store</string>
+    <string name="error_premium_upgrade">An error occurred during premium upgrade</string>
+    <string name="you_are_premium">You are premium, enjoy!</string>
+
+
+    <string name="main_menu_initiate_service">FlyingCrop service was created</string>
+    <string name="main_menu_send_email">Send e-mail..</string>
+
+    <string name="main_menu">MENU</string>
+
+    <string name="main_menu_run">Run FlyingCrop</string>
+    <string name="main_menu_run_secondary">Click to run service on background</string>
+    <string name="main_menu_run_changed">Minimize</string>
+
+    <string name="main_menu_settings">Settings</string>
+    <string name="main_menu_settings_secondary">Customize your app</string>
+
+    <string name="main_menu_quit">Quit</string>
+    <string name="main_menu_quit_secondary">Quit FlyingCrop</string>
+    <string name="main_menu_quit_changed">Stop FlyingCrop</string>
+    <string name="main_menu_quit_changed_secondary">Disable service and Quit</string>
+
+    <string name="main_menu_enable">ENABLE</string>
+
+    <string name="main_menu_premium">Premium</string>
+    <string name="main_menu_premium_secondary">Get rid of the advertising and disable the watermark</string>
+
+    <string name="main_menu_boot">Boot Run</string>
+    <string name="main_menu_boot_secondary">Allow running on boot</string>
+    <string name="main_menu_boot_allowed">This app is now allowed to run on boot, a FlyingCrop service will be created</string>
+
+    <string name="main_menu_support">SUPPORT</string>
+
+    <string name="main_menu_contact">Contact</string>
+    <string name="main_menu_contact_secondary">Give some suggestions and feedback</string>
+
+    <string name="main_menu_version">Version</string>
+    <string name="main_menu_version_text">FlyingCrop provides an easy share of taken screen shots, designed and programed to be as intuitive as possible.</string>
+    <string name="main_menu_version_developer">Developed by Pedro Fraga</string>
+
+
+
+    <string name="settings_get_premium">Get premium to enjoy this setting</string>
+
+    <string name="settings_defaults">Defaults</string>
+
+    <string name="settings_type">Type</string>
+    <string name="settings_type_secondary">Notification or Button</string>
+
+    <string name="settings_quality">Image quality</string>
+    <string name="settings_quality_secondary">A higher resolution will result in a longer image processing</string>
+
+    <string name="settings_brush_size">Brush size</string>
+    <string name="settings_brush_size_secondary">Select the most appropriate size for this tool</string>
+
+    <string name="settings_dismiss">Dismiss after crop</string>
+    <string name="settings_dismiss_secondary">Dismiss service after a crop action</string>
+
+    <string name="settings_crop_theme">Crop theme</string>
+
+    <string name="settings_crop_color">Crop area color</string>
+    <string name="settings_crop_color_secondary">Adapt to any applied theme, be aware of your selected area</string>
+
+    <string name="settings_secondary_crop_color">Crop area secondary color</string>
+    <string name="settings_secondary_crop_color_secondary">This is the color to be applied on buttons and text</string>
+
+    <string name="settings_brush_color">Brush color</string>
+    <string name="settings_brush_color_secondary">Customize the brush tool color</string>
+
+    <string name="settings_secondary_brush_color">Brush secondary color</string>
+    <string name="settings_secondary_brush_color_secondary">This is the color to be applied on buttons and text</string>
+
+    <string name="settings_notifications">Notifications</string>
+
+    <string name="settings_vibrate">Vibrate</string>
+    <string name="settings_vibrate_secondary">Enable a vibration when the image is fully processed</string>
+
+    <string name="settings_toast">Enable toast display with the full storage path when the image is fully processed</string>
+
+    <string name="settings_button">Button</string>
+    <string name="settings_notification">Notification</string>
+
+    <string name="settings_button_size">Button size</string>
+    <string name="settings_button_size_secondary">Define the size of your Button</string>
+
+    <string name="settings_advertising">Advertising</string>
+    <string name="settings_advertising_secondary">Remove advertising</string>
+
+    <string name="settings_watermark">Watermark</string>
+    <string name="settings_watermark_secondary">Disable watermark, notice that by disabling this feature you are not helping with FlyingCrop expansion</string>
+
+    <string name="settings_small">Small</string>
+    <string name="settings_medium">Medium</string>
+    <string name="settings_large">Large</string>
+    <string name="settings_very_large">Large</string>
+
+    <string name="settings_quality_low">Low</string>
+    <string name="settings_quality_medium">Medium</string>
+    <string name="settings_quality_high">High</string>
+    <string name="settings_quality_very_high">Very high</string>
+
+    <string name="crop_area">crop area</string>
+    <string name="brush_area">brush area</string>
+    <string name="brush_tool">Brush tool</string>
+    <string name="crop_tool">Crop tool</string>
+
+    <string name="notification_launch_menu">Hit to launch menu</string>
+    <string name="notification_scroll_down">You may have to scroll down this notification</string>
+
+
+    <string name="fragment_accept">You must accept this request for a good functioning of FlyingCrop!</string>
+    <string name="fragment_saving_crop">Saving image...</string>
+    <string name="fragment_wait">Wait a second</string>
+
+    <string name="fragment_error">An error occurred</string>
+    <string name="fragment_error_access">Could not access to the external storage</string>
+    <string name="fragment_error_toast">Error! Could not save image into store directory</string>
+
+    <string name="fragment_share">Share</string>
+    <string name="fragment_img_preview">Scroll down for a bigger image preview</string>
+    <string name="fragment_img_saved">Image was saved: </string>
+
+
+    <string name="next">Next</string>
+    <string name="got_it">Got it!</string>
+
+    <string name="first_run_first">Grab any screen on your android device!</string>
+    <string name="first_run_second">Be an artist and paint it!</string>
+    <string name="first_run_third">Share it with everyone in social media!</string>
+    <string name="first_run_fourth">Customize your app, just explore the "Settings" section!</string>
+
+    <string name="first_crop_first">Drag around to select the crop area</string>
+    <string name="first_crop_second">We recommend to select (Don\'t show again) on the Media Projection dialog, otherwise this dialog will appear on the taken screenshot</string>
+
+    <string name="first_notification_first">You may have to drag the notification down to see more options</string>
+
+    <string name="first_button_first">You can drag the button anywhere on the screen and it will close if at the center</string>
+    <string name="first_button_second">Click on the button to open the brush tool, you may access crop tool by there</string>
+
+    <string name="first_brush_first">You may paint by dragging around your finger</string>
+    <string name="first_brush_second">Explore the shortcuts placed on the top of your screen</string>
+</resources>
