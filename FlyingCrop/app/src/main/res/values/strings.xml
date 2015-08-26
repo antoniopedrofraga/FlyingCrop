@@ -44,6 +44,12 @@
     <string name="main_menu_contact">Contact</string>
     <string name="main_menu_contact_secondary">Give some suggestions and feedback</string>
 
+    <string name="main_menu_share">Share</string>
+    <string name="main_menu_share_secondary">Share this app with your friends</string>
+
+    <string name="main_menu_rate">Rate</string>
+    <string name="main_menu_rate_secondary">Please review and rate FlyingCrop on Google Play Store</string>
+
     <string name="main_menu_version">Version</string>
     <string name="main_menu_version_text">FlyingCrop provides an easy share of taken screen shots, designed and programed to be as intuitive as possible.</string>
     <string name="main_menu_version_developer">Developed by Pedro Fraga</string>

@@ -15,6 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.ArrayList;
 
 public class MyAdapter extends ArrayAdapter<Item> {
@@ -55,8 +59,8 @@ public class MyAdapter extends ArrayAdapter<Item> {
             counterView.setText(modelsArrayList.get(position).getDescription());
 
             if(modelsArrayList.get(position).isPremium()) {
-                final SharedPreferences settings = getContext().getSharedPreferences("data", 0);
-                if(settings.getBoolean("premium",false)) {
+                SharedPreferences s = getContext().getSharedPreferences("data", 0);
+                if(s.getBoolean("premium",false)) {
                     counterView.setTextColor(R.color.DarkSeaGreen);
                     titleView.setTextColor(R.color.DarkSeaGreen);
                     rowView.setClickable(false);
@@ -86,8 +90,8 @@ public class MyAdapter extends ArrayAdapter<Item> {
 
 
             if(modelsArrayList.get(position).isPremium()){
-                final SharedPreferences settings = getContext().getSharedPreferences("data", 0);
-                if(!settings.getBoolean("premium",false)) {
+                SharedPreferences s = getContext().getSharedPreferences("data", 0);
+                if(!s.getBoolean("premium",false)) {
                     counterView.setTextColor(R.color.DarkSeaGreen);
                     titleView.setTextColor(R.color.DarkSeaGreen);
 

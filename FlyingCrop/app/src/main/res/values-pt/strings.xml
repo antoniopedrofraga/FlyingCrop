@@ -43,6 +43,12 @@
     <string name="main_menu_contact">Contactar</string>
     <string name="main_menu_contact_secondary">Dá algumas sugestões sobre como melhorar a aplicação</string>
 
+    <string name="main_menu_share">Partilhar</string>
+    <string name="main_menu_share_secondary">Partilha esta aplicação com os teus amigos</string>
+
+    <string name="main_menu_rate">Avaliar</string>
+    <string name="main_menu_rate_secondary">Avalia a aplicação na loja Google Play</string>
+
     <string name="main_menu_version">Versão</string>
     <string name="main_menu_version_text">O FlyingCrop proporciona uma partilha fácil e customizada das capturas de ecrã, desenhado e programado para ser o mais intuitivo possível.</string>
     <string name="main_menu_version_developer">Desenvolvido por Pedro Fraga</string>
@@ -112,7 +118,7 @@
     <string name="brush_tool">No pincel</string>
     <string name="crop_tool">Ferramenta de recorte</string>
 
-    <string name="notification_launch_menu">Clica para lançar menu</string>
+    <string name="notification_launch_menu">Clica para abrir menu</string>
     <string name="notification_scroll_down">Podes ter que arrastar a notificação para baixo</string>
 
     <string name="fragment_accept">Tens de aceitar este pedido para o funcionamento do FlyingCrop!</string>

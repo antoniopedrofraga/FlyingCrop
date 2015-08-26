@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
@@ -57,17 +58,26 @@ public class MainMenu extends Activity {
         premium_toast = Toast.makeText(getBaseContext(), getResources().getString(R.string.you_are_premium), Toast.LENGTH_SHORT);
 
         final SharedPreferences settings = getSharedPreferences("data", 0);
-        if(!settings.getBoolean("advertising",false)){
-            final AdView mAdView = (AdView) findViewById(R.id.adView);
-            final AdRequest adRequest = new AdRequest.Builder().addTestDevice("1EAF2D1A43D561A3571617E0F935F6ED").build();
-            mAdView.loadAd(adRequest);
-        }
+
 
         if(settings.getBoolean("first_help",true)){
             Intent fIntent = new Intent(getApplicationContext(), FirstRun.class);
             startService(fIntent);
         }
         //Premium Upgrade
+
+
+        if(!settings.getBoolean("advertising",false)){
+            final AdView mAdView = (AdView) findViewById(R.id.adView);
+            final AdRequest adRequest = new AdRequest.Builder().addTestDevice("1EAF2D1A43D561A3571617E0F935F6ED").build();
+            mAdView.loadAd(adRequest);
+            mAdView.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    //--
+                }
+            });
+        }
 
 
         String base64EncodedPublicKey =
@@ -148,6 +158,23 @@ public class MainMenu extends Activity {
                         send.setData(uri);
                         startActivity(Intent.createChooser(send, "Send e-mail.."));
                         break;
+                    case 9:
+                        try
+                        { Intent i = new Intent(Intent.ACTION_SEND);
+                            i.setType("text/plain");
+                            i.putExtra(Intent.EXTRA_SUBJECT, "FlyingCrop");
+                            String sAux = "https://play.google.com/store/apps/details?id=com.flyingcrop";
+                            i.putExtra(Intent.EXTRA_TEXT, sAux);
+                            startActivity(Intent.createChooser(i, getResources().getString(R.string.main_menu_share)));
+                        }
+                        catch(Exception e)
+                        { //e.toString();
+                        }
+                        break;
+                    case 10:
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://play.google.com/store/apps/details?id=" + getBaseContext().getPackageName())));
+                        break;
                     case 1: //minimize
 
                         if( !ServiceIsRunning() ){ // ver se o processo esta a correr
@@ -156,7 +183,7 @@ public class MainMenu extends Activity {
                         }
                         finish();
                         break;
-                    case 9: // version
+                    case 11: // version
                         final SharedPreferences settings = getSharedPreferences("data", 0);
                         String versionName = BuildConfig.VERSION_NAME;
                         new AlertDialog.Builder(MainMenu.this)
@@ -233,9 +260,11 @@ public class MainMenu extends Activity {
 
         models.add(new Item(getResources().getString(R.string.main_menu_contact),getResources().getString(R.string.main_menu_contact_secondary), false));
 
+        models.add(new Item(getResources().getString(R.string.main_menu_share),getResources().getString(R.string.main_menu_share_secondary), false));
+
+        models.add(new Item(getResources().getString(R.string.main_menu_rate),getResources().getString(R.string.main_menu_rate_secondary), false));
+
         String versionName = BuildConfig.VERSION_NAME;
-
-
 
         models.add(new Item(getResources().getString(R.string.main_menu_version),settings.getBoolean("premium", false) ? versionName + " Premium" : versionName ,false));
 
