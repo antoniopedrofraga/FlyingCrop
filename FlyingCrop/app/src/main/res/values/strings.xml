@@ -61,7 +61,7 @@
     <string name="settings_defaults">Defaults</string>
 
     <string name="settings_type">Type</string>
-    <string name="settings_type_secondary">Notification or Button</string>
+    <string name="settings_type_secondary">Notification, Floating Button or Button Combination</string>
 
     <string name="settings_quality">Image quality</string>
     <string name="settings_quality_secondary">A higher resolution will result in a longer image processing</string>
@@ -95,6 +95,7 @@
 
     <string name="settings_button">Button</string>
     <string name="settings_notification">Notification</string>
+    <string name="settings_button_combination">Volume Up + Volume Down</string>
 
     <string name="settings_button_size">Button size</string>
     <string name="settings_button_size_secondary">Define the size of your Button</string>

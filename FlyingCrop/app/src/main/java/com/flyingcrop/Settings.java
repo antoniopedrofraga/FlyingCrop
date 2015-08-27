@@ -61,7 +61,7 @@ public class Settings extends Activity  {
                 switch (position) {
                     case 1:
                         int index = settings.getInt("type", 0);
-                        String type [] = {getResources().getString(R.string.settings_notification), getResources().getString(R.string.settings_button)};
+                        String type [] = {getResources().getString(R.string.settings_notification), getResources().getString(R.string.settings_button), getResources().getString(R.string.settings_button_combination)};
                         new AlertDialog.Builder(Settings.this)
                                 .setSingleChoiceItems(type, index, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int wichButton) {
@@ -361,6 +361,12 @@ public class Settings extends Activity  {
                 return true;
             }else  if ("com.flyingcrop.ButtonService"
                     .equals(service.service.getClassName())) {
+                return true;
+            }
+
+            if ("com.flyingcrop.CombinationService"
+                    .equals(service.service.getClassName()))
+            {
                 return true;
             }
         }

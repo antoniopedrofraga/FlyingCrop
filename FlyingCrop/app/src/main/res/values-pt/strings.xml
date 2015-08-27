@@ -59,7 +59,7 @@
     <string name="settings_defaults">Por padrão</string>
 
     <string name="settings_type">Tipo</string>
-    <string name="settings_type_secondary">Notificação ou botão</string>
+    <string name="settings_type_secondary">Notificação, botão flutuante ou combinacão de botões</string>
 
     <string name="settings_quality">Qualidade de imagem</string>
     <string name="settings_quality_secondary">Uma maior resolução pode aumentar o tempo de processamento</string>
@@ -93,6 +93,7 @@
 
     <string name="settings_button">Botão</string>
     <string name="settings_notification">Notificação</string>
+    <string name="settings_button_combination">Volume Cima + Volume Baixo</string>
 
     <string name="settings_button_size">Tamanho do botão</string>
     <string name="settings_button_size_secondary">Define o tamanho do botão</string>

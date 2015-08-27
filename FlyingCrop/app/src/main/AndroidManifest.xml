@@ -43,6 +43,7 @@
         </activity>
 
         <service android:name=".NotificationService" />
+        <service android:name=".CombinationService" />
         <service android:name=".ButtonService"
             android:windowSoftInputMode="stateVisible|adjustResize" />
         <service android:name=".FirstButton" />

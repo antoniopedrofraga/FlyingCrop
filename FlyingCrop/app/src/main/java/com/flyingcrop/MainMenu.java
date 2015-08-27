@@ -128,10 +128,12 @@ public class MainMenu extends Activity {
                                     int position, long id) {
                 Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
                 Intent bIntent = new Intent(getApplicationContext(), ButtonService.class);
+                Intent cIntent = new Intent(getApplicationContext(), CombinationService.class);
                 switch(position){
                     case 3: //quit
                         stopService(serviceIntent);
                         stopService(bIntent);
+                        stopService(cIntent);
                         finish();
                         break;
                     case 6://boot run
@@ -309,6 +311,12 @@ public class MainMenu extends Activity {
             }
 
             if ("com.flyingcrop.ButtonService"
+                    .equals(service.service.getClassName()))
+            {
+                return true;
+            }
+
+            if ("com.flyingcrop.CombinationService"
                     .equals(service.service.getClassName()))
             {
                 return true;

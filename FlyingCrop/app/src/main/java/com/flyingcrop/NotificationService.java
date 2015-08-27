@@ -39,6 +39,10 @@ public class NotificationService extends Service{
                         startService(bIntent);
                     }
                     stopSelf();
+                }else if(settings.getInt("type", 0) == 2) {
+                    Intent bIntent = new Intent(getBaseContext(), CombinationService.class);
+                    startService(bIntent);
+                    stopSelf();
                 }else{
                     if (settings.getBoolean("first_notification", true)) {
                         Intent bIntent = new Intent(getBaseContext(), FirstNotification.class);
